@@ -2,7 +2,7 @@ name: Daily Scraper
 
 on:
   schedule:
-    - cron: '40 16 * * *'  # 10:10 PM IST = 16:40 UTC
+    - cron: '40 16 * * *'  # Runs at 10:10 PM IST
   workflow_dispatch:       # Allow manual trigger
 
 jobs:
@@ -18,13 +18,16 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run scraper and save CSV with timestamp
         run: |
           timestamp=$(date +'%Y-%m-%d_%H-%M')
+          echo "Using timestamp: $timestamp"
           python scraper.py "$timestamp"
+
+      - name: List files in workspace (for debug)
+        run: ls -al
 
       - name: Upload CSV result
         uses: actions/upload-artifact@v3
