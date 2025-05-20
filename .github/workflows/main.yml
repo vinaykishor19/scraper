@@ -2,8 +2,8 @@ name: Daily Scraper
 
 on:
   schedule:
-    - cron: '0 9 * * *'   # Runs daily at 09:00 UTC
-  workflow_dispatch:      # Allows manual trigger
+    - cron: '0 9 * * *'   # Run daily at 09:00 UTC
+  workflow_dispatch:       # Allow manual trigger
 
 jobs:
   run-scraper:
@@ -21,12 +21,13 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run scraper
+      - name: Run scraper and save CSV with timestamp
         run: |
-          python scraper.py
+          timestamp=$(date +'%Y-%m-%d_%H-%M')
+          python scraper.py "$timestamp"
 
       - name: Upload CSV result
         uses: actions/upload-artifact@v3
         with:
           name: scraped-data
-          path: '*.csv'
+          path: guru_jobs_*.csv
