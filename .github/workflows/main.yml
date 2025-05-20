@@ -30,7 +30,7 @@ jobs:
         run: ls -al
 
       - name: Upload CSV result
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: scraped-data
           path: guru_jobs_*.csv
