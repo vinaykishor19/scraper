@@ -1,4 +1,4 @@
-# scrape_guru_and_pph.py
+# scraper.py
 
 import requests
 from bs4 import BeautifulSoup
