@@ -1,53 +1,97 @@
 import requests
-
 from bs4 import BeautifulSoup
 import pandas as pd
+from datetime import datetime
+import os
 
-URL = 'https://www.guru.com/d/jobs'
-r = requests.get(URL)
+# -------- GURU JOB SCRAPER --------
+def scrape_guru_jobs():
+    URL = 'https://www.guru.com/d/jobs'
+    try:
+        r = requests.get(URL, timeout=10)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch Guru jobs: {e}")
+        return pd.DataFrame()
 
-soup = BeautifulSoup(r.content, 'html5lib')
+    soup = BeautifulSoup(r.content, 'html5lib')
+    list_items = soup.select('ul.module_list > li')
+    data = []
 
+    for li in list_items:
+        h2 = li.find('h2', class_='jobRecord__title')
+        title = h2.get_text(strip=True) if h2 else 'N/A'
+        url = h2.find('a')['href'] if h2 and h2.find('a') else 'N/A'
+        budget_div = li.find('div', class_='jobRecord__budget')
+        budget = budget_div.get_text(strip=True) if budget_div else 'N/A'
+        desc_p = li.find('p', class_='jobRecord__desc')
+        desc = desc_p.get_text(strip=True) if desc_p else 'N/A'
+        skills_div = li.find('div', class_='skillsList')
+        skills = ', '.join(a.get_text(strip=True) for a in skills_div.find_all('a')) if skills_div else 'N/A'
 
-soup.prettify()
+        data.append({
+            'Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'Title': title,
+            'URL': url,
+            'Budget': budget,
+            'Description': desc,
+            'Skills': skills
+        })
 
-list_items = soup.select('ul.module_list > li')
+    return pd.DataFrame(data)
 
-data = []
+# -------- PEOPLEPERHOUR FREELANCERS SCRAPER --------
+def scrape_pph_freelancers():
+    URL = 'https://www.peopleperhour.com/hire-freelancers'
+    try:
+        r = requests.get(URL, timeout=10)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch PeoplePerHour freelancers: {e}")
+        return pd.DataFrame()
 
-for li in list_items:
-    
-    # h2 with class jobRecord__title
-    h2 = li.find('h2', class_='jobRecord__title')
-    title = h2.get_text(strip=True) if h2 else 'N/A'
-    
-    # URL inside the <a> inside h2
-    url = h2.find('a')['href'] if h2 and h2.find('a') else 'N/A'
-    
-    # div with class jobRecord__budget
-    budget_div = li.find('div', class_='jobRecord__budget')
-    budget = budget_div.get_text(strip=True) if budget_div else 'N/A'
-    
-    # p with class jobRecord__desc
-    desc_p = li.find('p', class_='jobRecord__desc')
-    desc = desc_p.get_text(strip=True) if desc_p else 'N/A'
-    
-    # all anchor tags inside div.skillsList, joined by commas
-    skills_div = li.find('div', class_='skillsList')
-    if skills_div:
-        skills = [a.get_text(strip=True) for a in skills_div.find_all('a')]
-        skills_joined = ', '.join(skills)
-    else:
-        skills_joined = 'N/A'
+    soup = BeautifulSoup(r.content, 'html5lib')
+    list_items = soup.select('div.pph-row--nested > ul > li')
+    data = []
 
-    data.append({
-    'Title': title,
-    'URL': url,
-    'Budget': budget,
-    'Description': desc,
-    'Skills': skills_joined
-    })
+    for li in list_items:
+        h2 = li.find('h2', class_='title-nano')
+        title = h2.get_text(strip=True) if h2 else 'N/A'
+        url = li.find('a')['href'] if li and li.find('a') else 'N/A'
+        budget_div = li.find('div', class_='u-txt--right')
+        budget = budget_div.get_text(strip=True) if budget_div else 'N/A'
+        desc_p = li.find('p', class_='u-mgb--1')
+        desc = desc_p.get_text(strip=True) if desc_p else 'N/A'
+        skills_div = li.find('ul', class_='u-mgb--0')
+        skills = ', '.join(a.get_text(strip=True) for a in skills_div.find_all('a')) if skills_div else 'N/A'
 
-df = pd.DataFrame(data)
+        data.append({
+            'Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'Title': title,
+            'URL': url,
+            'Budget': budget,
+            'Description': desc,
+            'Skills': skills
+        })
 
-print(df)
+    return pd.DataFrame(data)
+
+# -------- MAIN EXECUTION --------
+guru_df = scrape_guru_jobs()
+pph_df = scrape_pph_freelancers()
+
+# Save each DataFrame to its own Excel file
+guru_file = '/content/guru_jobs_data.xlsx'
+pph_file = '/content/freelancer_data.xlsx'
+
+if not guru_df.empty:
+    guru_df.to_excel(guru_file, index=False)
+    print("Guru job data saved to:", guru_file)
+else:
+    print("No Guru job data scraped.")
+
+if not pph_df.empty:
+    pph_df.to_excel(pph_file, index=False)
+    print("Freelancer data saved to:", pph_file)
+else:
+    print("No freelancer data scraped.")
