@@ -1,5 +1,5 @@
 
-# 🕷️ Web Scraper for Guru.com Jobs and PeoplePerHour Freelancers
+# Web Scraper for Guru.com Jobs and PeoplePerHour Freelancers
 
 This Python script scrapes job listings from [Guru.com](https://www.guru.com/d/jobs) and freelancer profiles from [PeoplePerHour](https://www.peopleperhour.com/hire-freelancers). The data is saved into separate Excel files for tracking and analysis.
 
@@ -37,7 +37,7 @@ pip install requests beautifulsoup4 pandas openpyxl html5lib
 After installing the dependencies, run the script with:
 
 ```bash
-python scrape_guru_and_pph.py
+python scraper.py
 ```
 
 ---
