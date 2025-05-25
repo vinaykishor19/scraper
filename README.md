@@ -1,62 +1,43 @@
+# Freelancer Data Scraper
 
-# Web Scraper for Guru.com Jobs and PeoplePerHour Freelancers
+This Python script scrapes freelancer profiles from PeoplePerHour and job listings from Guru.com, then saves the data to Excel files.
 
-This Python script scrapes job listings from [Guru.com](https://www.guru.com/d/jobs) and freelancer profiles from [PeoplePerHour](https://www.peopleperhour.com/hire-freelancers). The data is saved into separate Excel files for tracking and analysis.
+## Features
 
----
+- Scrapes freelancer profiles from PeoplePerHour (pages 1-10)
+  - Collects title, URL, budget, skills, hourlies, and member stats
+- Scrapes job listings from Guru.com (all available pages)
+  - Collects title, URL, budget, description, and required skills
+- Saves data to separate Excel files with timestamps
+- Handles errors and timeouts gracefully
 
-## 📦 Install Requirements
+## Requirements
 
-Make sure you have **Python 3.7+** installed on your system.
+- Python 3.6+
+- Libraries listed in `requirements.txt`
 
-### 1. Clone the Repository
+## Installation
 
-```bash
-git clone https://github.com/your-username/freelance-job-scraper.git
-cd freelance-job-scraper
-```
-
-### 2. Install Required Libraries
-
-Install dependencies using `pip`:
-
-```bash
+1. Clone this repository or download the script
+2. Install required packages:
 pip install -r requirements.txt
-```
 
-Or install them manually:
+## Usage
 
-```bash
-pip install requests beautifulsoup4 pandas openpyxl html5lib
-```
-
----
-
-## 🚀 Run the Script
-
-After installing the dependencies, run the script with:
-
-```bash
+Run the script:
 python scraper.py
-```
 
----
 
-## 📁 Output Files
+The script will generate two Excel files:
+- `peopleperhour_freelancer_data.xlsx`
+- `guru_jobs_data.xlsx`
 
-- `guru_jobs_data.xlsx` – Contains job listings scraped from Guru.com.
-- `freelancer_data.xlsx` – Contains freelancer profiles scraped from PeoplePerHour.
+## Notes
 
-Each entry includes a timestamp indicating when the data was scraped.
+- The script may need updates if the target websites change their HTML structure
+- Be respectful with scraping - don't overload the servers
+- Consider adding delays between requests if running frequently
 
----
+## Disclaimer
 
-## ✅ Example Use Case
-
-Use this script to:
-
-- Track freelance job opportunities across platforms.
-- Analyze required skills and trends in freelance markets.
-- Find and categorize freelancers by expertise and description.
-
----
+This script is for educational purposes only. Please check the websites' terms of service before scraping.
